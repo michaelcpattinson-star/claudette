@@ -14,6 +14,14 @@ def _paths() -> tuple[Path, Path, Path]:
     return manifest_path(), texts_dir(), db_path()
 
 
+def _index():
+    """Read commands bootstrap the index like the server does, so a fresh install just works."""
+    from claudette.bootstrap import ensure_index
+    from claudette.index import Index
+
+    return Index(ensure_index())
+
+
 def cmd_fetch(a: argparse.Namespace) -> int:
     from claudette.fetch import fetch_all
 
@@ -51,10 +59,7 @@ def cmd_index(a: argparse.Namespace) -> int:
 
 
 def cmd_search(a: argparse.Namespace) -> int:
-    from claudette.index import Index
-
-    _, _, db = _paths()
-    resp = Index(db).search(a.query, k=a.k, slug=a.work)
+    resp = _index().search(a.query, k=a.k, slug=a.work)
     print(f"status: {resp.status}")
     for lim in resp.limitations:
         print(f"  ! {lim}")
@@ -65,10 +70,7 @@ def cmd_search(a: argparse.Namespace) -> int:
 
 
 def cmd_read(a: argparse.Namespace) -> int:
-    from claudette.index import Index
-
-    _, _, db = _paths()
-    resp = Index(db).read(a.ref, context=a.context)
+    resp = _index().read(a.ref, context=a.context)
     print(f"status: {resp.status}")
     for lim in resp.limitations:
         print(f"  ! {lim}")
@@ -80,10 +82,7 @@ def cmd_read(a: argparse.Namespace) -> int:
 
 
 def cmd_works(a: argparse.Namespace) -> int:
-    from claudette.index import Index
-
-    _, _, db = _paths()
-    for w in Index(db).works(a.shelf):
+    for w in _index().works(a.shelf):
         print(f"{w['year']}  {w['author']:28s} {w['title'][:50]:50s}  {w['slug']}  ({w['passages']} passages)")
     return 0
 
