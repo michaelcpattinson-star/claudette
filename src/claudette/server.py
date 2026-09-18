@@ -26,6 +26,10 @@ INSTRUCTIONS = f"""\
 This server exposes a corpus of texts written by women as citeable passages.
 {PROVENANCE}
 
+Two modes. CITED: verbatim passages from the corpus, provable. LENS: the model's
+own knowledge of women thinkers of any era, paraphrased, each attribution checked
+with verify_attribution and labelled 'from memory — check'. Answers say which.
+
 Two tiers may be present. The CORE is 36 works a person chose, checked and
 annotated. The FULL tier, if the operator built it, adds every Project Gutenberg
 text whose every author, editor and translator Wikidata records as a woman —
@@ -150,6 +154,24 @@ def corpus_provenance() -> ToolResponse:
             "Curated editions have had front matter by others trimmed; full-tier editions have not been checked and may carry a preface by another hand.",
         ],
     )
+
+
+@mcp.tool()
+def verify_attribution(
+    name: Annotated[str, Field(description="A thinker or writer you intend to name from memory, e.g. 'Elinor Ostrom'.")],
+    work: Annotated[str | None, Field(description="The work you intend to attribute to her, e.g. 'Governing the Commons'. Optional but strongly encouraged.")] = None,
+) -> ToolResponse:
+    """Check against Wikidata that a person exists, is recorded as a woman, and wrote the named work.
+
+    Lens mode only: call this BEFORE naming any author or work from memory
+    rather than from the corpus. `ok` means name her. `weak` means name her
+    with the stated caveat. `not_found` means do not. Not for authors already
+    in the corpus — search_corpus is their check. The one network call this
+    server makes; it goes only to Wikidata.
+    """
+    from claudette.attribution import verify
+
+    return verify(name, work)
 
 
 @mcp.prompt(name="claudette", description="Claudette's standing instructions: answer only from the corpus, cite everything, say when it does not speak to the question.")

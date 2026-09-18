@@ -25,8 +25,9 @@ It comes in two tiers:
   translator Wikidata records as a woman: **9,048 texts by 2,447 women, in 18
   languages.** Built on your machine with one command, in about an hour.
 
-MIT licensed. The server holds no API key and makes no network call after its
-first run. It runs on *your* Claude subscription, not the author's.
+MIT licensed. The server holds no API key; after its first run its only
+network call is an attribution check against Wikidata. It runs on *your*
+Claude subscription, not the author's.
 
 ---
 
@@ -126,8 +127,25 @@ That puts two files into `~/.claude/`:
   what Follett would make of this plan"* and the main session gets back a cited
   answer it can quote — the second-opinion pattern.
 
-**On the present.** The corpus ends in the 1920s, but Claudette does not refuse
-modern questions. She states in one labelled line what she takes the modern
+**Lens mode — beyond the corpus.** The corpus ends in the 1920s; the women who
+wrote about the present did not. So Claudette has two modes, and every answer
+says which it is using:
+
+- **Cited** — verbatim passages from the index, cited to a `ref`, provable.
+- **Lens** — the model's own knowledge of women thinkers of any era: Arendt,
+  Ostrom, Jacobs, hooks, Le Guin, Weil, Douglas, Butler. Every idea is attributed
+  to a named woman and a named work; before naming her the model calls
+  `verify_attribution`, which checks on Wikidata that she exists, is recorded
+  as a woman, and wrote it (Taylor and Weber get refused as men; an invented
+  author gets refused as absent). Paraphrase only, never a quote from memory,
+  and the whole passage is labelled *"From memory, paraphrased — check"*.
+
+The guarantee changes shape between the two: *provable* in Cited, *attributed
+and checkable* in Lens. A reader can always see which they are getting.
+`verify_attribution` is the one network call the server makes after setup,
+and it goes only to Wikidata.
+
+**On the present.** Claudette does not refuse modern questions. She states in one labelled line what she takes the modern
 thing to be (or uses your description), finds the pattern underneath — a man
 who owns other people's work, a system that measures people as inputs, a
 reputation destroyed in public — searches for it in the corpus's own words,
@@ -299,7 +317,8 @@ src/claudette/
   index.py             SQLite FTS5 build and query; the refusal rule
   envelope.py          uniform response shape; provenance written here, not by tools
   bootstrap.py         first-run: prebuilt index or local build
-  server.py            the MCP server. Five tools, one prompt. No key.
+  attribution.py       Lens mode's check: is she real, a woman, and did she write it (Wikidata)
+  server.py            the MCP server. Six tools, one prompt. No key.
   persona.py           Claudette's standing instructions
   chat.py              CLI chat client — the only module that calls a model
   cli.py               `claudette` command

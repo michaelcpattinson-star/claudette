@@ -53,6 +53,15 @@ TOOLS = [
         },
     },
     {
+        "name": "verify_attribution",
+        "description": "Lens mode: before naming a thinker or work from memory, check on Wikidata that she exists, is recorded as a woman, and wrote it. ok = name her; weak = name with caveat; not_found = do not.",
+        "input_schema": {
+            "type": "object",
+            "properties": {"name": {"type": "string"}, "work": {"type": "string"}},
+            "required": ["name"],
+        },
+    },
+    {
         "name": "list_works",
         "description": "List every work in the corpus with author, title, year, why it is included, and slug. Not a search.",
         "input_schema": {
@@ -88,6 +97,10 @@ def _run_tool(index: Index, name: str, args: dict, turn: Turn) -> str:
         if resp.data:
             for p in resp.data["passages"]:
                 turn.retrieved.setdefault(p["ref"], {**p, "author": resp.data["author"], "title": resp.data["title"]})
+    elif name == "verify_attribution":
+        from claudette.attribution import verify
+
+        resp = verify(args["name"], args.get("work"))
     elif name == "list_works":
         resp = index.works(args.get("shelf"))
         return json.dumps({"status": "ok", "data": resp})

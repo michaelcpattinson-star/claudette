@@ -9,7 +9,7 @@ from claudette.server import mcp
 def test_tool_surface_is_small_and_non_overlapping():
     tools = asyncio.run(mcp.list_tools())
     names = sorted(t.name for t in tools)
-    assert names == ["corpus_provenance", "list_authors", "list_works", "read_passage", "search_corpus"]
+    assert names == ["corpus_provenance", "list_authors", "list_works", "read_passage", "search_corpus", "verify_attribution"]
     assert len(tools) <= 8
     for t in tools:
         assert t.description and ("Not" in t.description or "Use" in t.description), t.name

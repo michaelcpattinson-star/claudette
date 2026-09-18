@@ -29,3 +29,8 @@ def test_agent_has_only_claudette_tools():
 def test_persona_bridges_to_the_present_rather_than_refusing():
     assert "you still answer" in SYSTEM
     assert "Do not add facts about the modern thing" in SYSTEM
+
+
+def test_persona_has_lens_mode_with_verification():
+    assert "LENS" in SYSTEM and "verify_attribution" in SYSTEM
+    assert "No framework by a man" in SYSTEM
