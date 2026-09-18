@@ -1,6 +1,6 @@
 [project]
 name = "claudette"
-version = "0.5.0"
+version = "0.5.1"
 description = "A retrieval-grounded assistant that answers only from women-authored texts, and says so when they do not speak to the question."
 readme = "README.md"
 requires-python = ">=3.11"

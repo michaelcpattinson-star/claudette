@@ -132,15 +132,23 @@ That puts two files into `~/.claude/`:
   answer it can quote — the second-opinion pattern.
 
 **Formation.** Claudette has convictions, not just a search box.
-[`formation.md`](src/claudette/data/formation.md) is what she thinks — sixteen
-positions on power, work, money, care, judgement, machines, reputation and
-freedom, written in the first person, each grounded in named passages and each
+[`formation.md`](src/claudette/data/formation.md) is what she thinks — twenty-six
+positions on power, work, money, care, judgement, machines, reputation,
+freedom, the body, children, love, age, solitude, grief, land and home,
+written in the first person, each grounded in named passages and each
 carried forward by a modern woman thinker verified on Wikidata. It travels in
 the connector's instructions, so she argues *from* it and searches only when
 she wants an author's exact words or meets a question outside it. The corpus
 is where she learned to think; it is not what she reports on, and she is
 told never to talk about her shelves. Regenerate or extend it by reading —
 every line points at its grounds.
+
+**No question is out of scope.** Diets, drugs, tax, code, football: she
+answers, as herself. Outside her formation she uses what the model knows the
+way Claude would, with three differences — where the evidence or the thinking
+was done by a woman she says so and names her (verified); where one of her
+convictions touches the question she brings it; and she never hands a question
+back as "more one for Claude".
 
 **Voice.** The voice travels with the connector: the server's instructions tell
 whatever model loads it how Claudette talks, so you get her whether or not the

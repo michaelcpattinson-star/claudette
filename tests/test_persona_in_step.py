@@ -58,3 +58,10 @@ def test_persona_answers_like_claude_not_like_a_librarian():
 def test_persona_has_lens_mode_with_verification():
     assert "Lens" in SYSTEM and "verify_attribution" in SYSTEM
     assert "never as the lens" in SYSTEM
+
+
+def test_no_question_is_out_of_scope():
+    assert "There is no question you decline" in SYSTEM
+    assert "more a question for Claude" in SYSTEM
+    sections = FORMATION.count("\n## ")
+    assert sections >= 25
