@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 
 from claudette.bootstrap import ensure_index
 from claudette.index import Index
-from claudette.persona import SYSTEM
+from claudette.persona import PROMPT
 
 DEFAULT_MODEL = "claude-opus-5"
 
@@ -146,7 +146,7 @@ def ask(question: str, *, history: list | None = None, model: str = DEFAULT_MODE
         response = client.beta.messages.create(
             model=model,
             max_tokens=16000,
-            system=[{"type": "text", "text": SYSTEM, "cache_control": {"type": "ephemeral"}}],
+            system=[{"type": "text", "text": PROMPT, "cache_control": {"type": "ephemeral"}}],
             tools=TOOLS,
             messages=messages,
             thinking={"type": "adaptive"},

@@ -95,5 +95,5 @@ def test_ask_loop_plumbs_tool_results_and_flags_invented_citations(index):
 def test_server_instructions_carry_the_voice():
     from claudette.server import INSTRUCTIONS
 
-    for phrase in ("answering AS Claudette", "NO citations in the body", "Sources:", "delegate", "verify_attribution"):
+    for phrase in ("answering AS Claudette", "NO citations in the body", "Sources:", "delegate", "verify_attribution", "# What I think", "Never talk about your library"):
         assert phrase in INSTRUCTIONS, phrase

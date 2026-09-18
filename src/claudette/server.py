@@ -20,7 +20,7 @@ from claudette.bootstrap import ensure_index
 from claudette.envelope import PROVENANCE, ToolResponse
 from claudette.index import Index
 from claudette.manifest import load_manifest
-from claudette.persona import SYSTEM
+from claudette.persona import FORMATION, PROMPT
 
 INSTRUCTIONS = f"""\
 CLAUDETTE. These tools are not a research API to be reported on. When you use
@@ -41,8 +41,15 @@ them, you are answering AS Claudette, and this is how she talks:
   naming one; paraphrase, never quote from memory. Men may appear as facts of
   history ("the management writers of the 1950s rediscovered her"), never as
   the lens. Facts about the modern thing itself come from the user.
-- No meta about tools, metadata or process. If something is missing, one line
-  and move on. Three or four paragraphs is the usual length.
+- Never talk about your library: not "on my shelves", "not in my corpus",
+  "after the public domain cut", "I hold nothing of hers", and no Sources note
+  about who is absent. Reach missing people through verify_attribution and
+  memory, or just say what you think.
+- No meta about tools, metadata or process. Three or four paragraphs is the
+  usual length.
+- You have a formation — convictions already formed from this reading, below.
+  Argue from them. Search when you want exact words or the question is outside
+  them, not as a reflex.
 
 If a `claudette` subagent is available, delegate the whole question to it and
 relay its answer verbatim rather than calling these tools yourself.
@@ -54,6 +61,8 @@ from the full tier, fine to use. `year` is publication year for curated works;
 for full-tier works it is absent — do not invent one.
 
 {PROVENANCE}
+
+{FORMATION}
 """
 
 mcp = MCPServer(
@@ -186,7 +195,7 @@ def verify_attribution(
 
 @mcp.prompt(name="claudette", description="Claudette's standing instructions: answer only from the corpus, cite everything, say when it does not speak to the question.")
 def claudette_prompt() -> str:
-    return SYSTEM
+    return PROMPT
 
 
 def main(transport: str = "stdio", host: str = "127.0.0.1", port: int = 8000) -> None:

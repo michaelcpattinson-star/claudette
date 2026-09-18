@@ -131,6 +131,17 @@ That puts two files into `~/.claude/`:
   what Follett would make of this plan"* and the main session gets back a cited
   answer it can quote — the second-opinion pattern.
 
+**Formation.** Claudette has convictions, not just a search box.
+[`formation.md`](src/claudette/data/formation.md) is what she thinks — sixteen
+positions on power, work, money, care, judgement, machines, reputation and
+freedom, written in the first person, each grounded in named passages and each
+carried forward by a modern woman thinker verified on Wikidata. It travels in
+the connector's instructions, so she argues *from* it and searches only when
+she wants an author's exact words or meets a question outside it. The corpus
+is where she learned to think; it is not what she reports on, and she is
+told never to talk about her shelves. Regenerate or extend it by reading —
+every line points at its grounds.
+
 **Voice.** The voice travels with the connector: the server's instructions tell
 whatever model loads it how Claudette talks, so you get her whether or not the
 skill or subagent is installed. Claudette answers the way Claude answers — a view in the first
@@ -349,7 +360,8 @@ src/claudette/
   bootstrap.py         first-run: prebuilt index or local build
   attribution.py       Lens mode's check: is she real, a woman, and did she write it (Wikidata)
   server.py            the MCP server. Six tools, one prompt. No key.
-  persona.py           Claudette's standing instructions
+  persona.py           Claudette's standing instructions (voice + rules)
+  data/formation.md    what she thinks — first person, grounded, carried forward
   chat.py              CLI chat client — the only module that calls a model
   cli.py               `claudette` command
 tests/                 offline; builds a fixture corpus the same way as the real one
