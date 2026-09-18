@@ -57,32 +57,53 @@ def raw_on_disk(dest: Path, ebook_id: int) -> Path | None:
     return None
 
 
+BATCH = 400
+RETRIES = 3
+
+
+def _rsync_batch(files: list[str], dest: Path, listing: Path, *, log=log) -> bool:
+    listing.write_text("\n".join(files) + "\n")
+    cmd = ["rsync", "-az", "--no-motd", "--timeout=120", "--ignore-errors", "--files-from", str(listing), f"{MIRROR}/", str(dest)]
+    for attempt in range(1, RETRIES + 1):
+        proc = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+        # exit 23/24 = some files missing or vanished, which is normal here
+        if proc.returncode in (0, 23, 24):
+            return True
+        tail = [l for l in proc.stderr.splitlines() if "link_stat" not in l][-2:]
+        log(f"  rsync batch failed (exit {proc.returncode}, attempt {attempt}/{RETRIES}): {' | '.join(tail)[-300:]}")
+        time.sleep(10 * attempt)
+    return False
+
+
 def rsync_fetch(works: list[FullWork], dest: Path, *, log=log) -> None:
-    """Two rsync passes: the UTF-8 `-0.txt` every modern text has, then the
-    older encodings for whatever is still missing. Missing files are expected
-    and ignored; asking for them all at once makes the sender stat three paths
-    per work and roughly triples the wall-clock."""
+    """Batched rsync: the UTF-8 `-0.txt` every modern text has, then the older
+    encodings for whatever is still missing. Batches keep a stalled mirror
+    connection from costing more than a few hundred files, and missing files
+    are expected and ignored — asking for every variant at once makes the
+    sender stat three paths per work and roughly triples the wall-clock."""
     if shutil.which("rsync") is None:
         log("rsync not found; falling back to HTTP for everything (slower)")
         return
     dest.mkdir(parents=True, exist_ok=True)
+    listing = dest / ".files-from.txt"
     for variant in (0, slice(1, None)):
         pending = [w for w in works if raw_on_disk(dest, w.id) is None]
         if not pending:
             return
-        wanted = []
+        wanted: list[str] = []
         for w in pending:
             c = candidate_files(w.id)
             wanted += [c[variant]] if variant == 0 else c[variant]
-        listing = dest / ".files-from.txt"
-        listing.write_text("\n".join(wanted) + "\n")
-        log(f"rsync: {len(wanted)} files for {len(pending)} works from {MIRROR}")
-        cmd = ["rsync", "-az", "--no-motd", "--timeout=300", "--ignore-errors", "--files-from", str(listing), f"{MIRROR}/", str(dest)]
-        proc = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
-        # exit 23 = some files missing, which is normal here; anything else is a real failure
-        if proc.returncode not in (0, 23, 24):
-            log(f"rsync failed ({proc.returncode}): {proc.stderr.strip()[-500:]}")
-            return
+        log(f"rsync: {len(wanted)} files for {len(pending)} works from {MIRROR}, in batches of {BATCH}")
+        failures = 0
+        for i in range(0, len(wanted), BATCH):
+            if not _rsync_batch(wanted[i : i + BATCH], dest, listing, log=log):
+                failures += 1
+                if failures >= 3:
+                    log("rsync: too many failed batches; leaving the rest to HTTP")
+                    return
+            have = sum(1 for w in pending if raw_on_disk(dest, w.id))
+            log(f"  rsync {min(i + BATCH, len(wanted))}/{len(wanted)} requested, {have}/{len(pending)} works on disk")
 
 
 def http_fetch_missing(works: list[FullWork], dest: Path, *, pause: float = 3.0, log=log) -> int:

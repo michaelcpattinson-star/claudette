@@ -223,24 +223,37 @@ class Index:
         terms = content_terms(query)
         if not terms:
             return ToolResponse.no_coverage("The question contains no searchable words once common words are removed.")
+        # Rank inside FTS first and join only the winners. Joining before the
+        # LIMIT makes SQLite fetch every matching passage's blob — millions,
+        # on the full tier — before it sorts. Filters that need the works
+        # table widen the candidate set instead, then filter after the join.
+        filtered = bool(slug or language or curated_only)
+        candidates = k * 50 if filtered else k
         sql = (
-            "SELECT p.id, p.slug, p.ordinal, p.ztext, w.author, w.title, w.year, w.source, w.curated, "
-            "bm25(passages_fts) AS score "
-            "FROM passages_fts JOIN passages p ON p.id = passages_fts.rowid "
-            "JOIN works w ON w.slug = p.slug WHERE passages_fts MATCH ?"
+            "SELECT p.id, p.slug, p.ordinal, p.ztext, w.author, w.title, w.year, w.source, w.curated, f.score "
+            "FROM (SELECT rowid, bm25(passages_fts) AS score FROM passages_fts WHERE passages_fts MATCH ? "
+            "      ORDER BY score LIMIT ?) f "
+            "JOIN passages p ON p.id = f.rowid JOIN works w ON w.slug = p.slug"
         )
-        args: list = [fts_query(terms)]
+        args: list = [fts_query(terms), candidates]
+        where = []
         if slug:
-            sql += " AND p.slug = ?"
+            where.append("p.slug = ?")
             args.append(slug)
         if language:
-            sql += " AND w.language = ?"
+            where.append("w.language = ?")
             args.append(language)
         if curated_only:
-            sql += " AND w.curated = 1"
-        sql += " ORDER BY score LIMIT ?"
+            where.append("w.curated = 1")
+        if where:
+            sql += " WHERE " + " AND ".join(where)
+        sql += " ORDER BY f.score LIMIT ?"
         args.append(k)
         rows = self.con.execute(sql, args).fetchall()
+        if not rows and filtered and terms:
+            # A restricted search whose matches all fell outside the top
+            # candidates: rerun the ranking inside the restriction.
+            rows = self._search_restricted(terms, k, slug, language, curated_only)
         if not rows:
             return ToolResponse.no_coverage(
                 f"No passage in the corpus contains any of: {', '.join(terms)}. "
@@ -258,6 +271,32 @@ class Index:
                 f"({', '.join(terms)}). Use it only if it genuinely bears on the question, and say the match is partial.",
             )
         return ToolResponse.ok([h.model_dump() for h in hits])
+
+    def _search_restricted(self, terms, k, slug, language, curated_only):
+        """Slow path: rank within a restriction when the fast path found nothing.
+
+        Restricting by slug is cheap (one work's passages); by language or
+        curated flag it can still scan widely, but this only runs when the
+        top candidates all missed, which is rare.
+        """
+        sql = (
+            "SELECT p.id, p.slug, p.ordinal, p.ztext, w.author, w.title, w.year, w.source, w.curated, "
+            "bm25(passages_fts) AS score FROM passages_fts "
+            "JOIN passages p ON p.id = passages_fts.rowid JOIN works w ON w.slug = p.slug "
+            "WHERE passages_fts MATCH ?"
+        )
+        args: list = [fts_query(terms)]
+        if slug:
+            sql += " AND p.slug = ?"
+            args.append(slug)
+        if language:
+            sql += " AND w.language = ?"
+            args.append(language)
+        if curated_only:
+            sql += " AND w.curated = 1"
+        sql += " ORDER BY score LIMIT ?"
+        args.append(k)
+        return self.con.execute(sql, args).fetchall()
 
     def read(self, ref: str, context: int = 1) -> ToolResponse:
         """A passage by citation key, with `context` neighbours either side."""
