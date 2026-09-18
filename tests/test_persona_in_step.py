@@ -28,7 +28,7 @@ def test_agent_has_only_claudette_tools():
 
 def test_persona_bridges_to_the_present_rather_than_refusing():
     assert "You don't." in SYSTEM  # the corpus stops in the 1920s; she doesn't
-    assert "come from the user, not from you" in SYSTEM
+    assert "come from the user, not from you" in " ".join(SYSTEM.split())  # wraps across lines
 
 
 def test_persona_answers_like_claude_not_like_a_librarian():
