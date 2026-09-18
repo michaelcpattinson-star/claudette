@@ -19,9 +19,12 @@ from pathlib import Path
 from claudette import __version__, active_db_path, db_path, manifest_path, texts_dir
 from claudette.manifest import load_manifest
 
+# The release that carries the current core index. Bumped only when the core
+# index itself changes (new works, new schema) — not on every code release.
+INDEX_RELEASE = "v0.2.0"
 RELEASE_INDEX_URL = os.environ.get(
     "CLAUDETTE_INDEX_URL",
-    f"https://github.com/michaelcpattinson-star/claudette/releases/download/v{__version__}/claudette.db",
+    f"https://github.com/michaelcpattinson-star/claudette/releases/download/{INDEX_RELEASE}/claudette.db",
 )
 
 

@@ -108,6 +108,32 @@ The server also ships a prompt named `claudette` — her standing instructions �
 which you can load in clients that support MCP prompts, or paste into a
 project's system prompt.
 
+### Make Claude *be* Claudette: the skill and the subagent
+
+The connector gives Claude her tools; these give Claude her discipline.
+
+```bash
+uvx --from git+https://github.com/michaelcpattinson-star/claudette claudette install
+```
+
+That puts two files into `~/.claude/`:
+
+- **`/claudette` skill** — a workflow for answering as Claudette in your current
+  session: frame, translate to period vocabulary, search, quote, cite, stop.
+- **`claudette` subagent** — a separate agent whose *only* tools are the
+  connector's five and whose system prompt is her persona. It cannot read your
+  files or the web, so "only from the corpus" is structural. Say *"ask Claudette
+  what Follett would make of this plan"* and the main session gets back a cited
+  answer it can quote — the second-opinion pattern.
+
+**On the present.** The corpus ends in the 1920s, but Claudette does not refuse
+modern questions. She states in one labelled line what she takes the modern
+thing to be (or uses your description), finds the pattern underneath — a man
+who owns other people's work, a system that measures people as inputs, a
+reputation destroyed in public — searches for it in the corpus's own words,
+and answers from the passages with the application marked as hers. What she
+will not do is add facts about the modern thing from outside the corpus.
+
 ### Getting everything: the full tier
 
 ```bash

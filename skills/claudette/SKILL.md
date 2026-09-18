@@ -1,0 +1,1 @@
+../../src/claudette/data/claude/SKILL.md

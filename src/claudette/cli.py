@@ -185,6 +185,27 @@ def cmd_chat(a: argparse.Namespace) -> int:
         _print_turn(turn, a.verbose)
 
 
+def cmd_install(a: argparse.Namespace) -> int:
+    """Put the skill and the subagent where Claude Code looks for them."""
+    import shutil
+
+    from claudette import manifest_path
+
+    src = manifest_path().parent / "claude"
+    root = Path(a.into).expanduser()
+    targets = {
+        src / "SKILL.md": root / "skills" / "claudette" / "SKILL.md",
+        src / "agent.md": root / "agents" / "claudette.md",
+    }
+    for s_, d in targets.items():
+        d.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy(s_, d)
+        print(f"  {d}")
+    print("\nInstalled. In a new Claude Code session: type /claudette, or say 'ask Claudette …' to use the subagent.")
+    print("Both need the connector:  claude mcp add --scope user claudette -- uvx --from git+https://github.com/michaelcpattinson-star/claudette claudette-mcp")
+    return 0
+
+
 def cmd_serve(a: argparse.Namespace) -> int:
     from claudette.server import main
 
@@ -250,6 +271,10 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--model", default="claude-opus-5")
     s.add_argument("-v", "--verbose", action="store_true")
     s.set_defaults(fn=cmd_chat)
+
+    s = sub.add_parser("install", help="install the /claudette skill and the claudette subagent into Claude Code")
+    s.add_argument("--into", default="~/.claude", help="Claude Code config root (default ~/.claude; use a project's .claude for project scope)")
+    s.set_defaults(fn=cmd_install)
 
     s = sub.add_parser("serve", help="run the MCP server (stdio by default; --http to host it)")
     s.add_argument("--http", action="store_true", help="serve streamable HTTP at /mcp instead of stdio")
