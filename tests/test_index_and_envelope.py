@@ -92,5 +92,26 @@ def test_read_bad_refs(index):
 def test_works_and_stats(index):
     assert [w["slug"] for w in index.works()] == ["fixture-mill", "fixture-committee"]  # ordered by year
     assert [w["slug"] for w in index.works("fiction")] == ["fixture-mill"]
+    assert [w["slug"] for w in index.works(author="sample")] == ["fixture-mill"]
     s = index.stats()
-    assert s == {"works": 2, "authors": 2, "passages": sum(w["passages"] for w in index.works())}
+    assert s == {"tier": "core", "works": 2, "authors": 2, "passages": sum(w["passages"] for w in index.works()), "curated_works": 2, "languages": 1}
+    assert index.tier == "core"
+
+
+def test_every_hit_carries_its_own_source_and_curation(index):
+    hit = index.search("committee vote").data[0]
+    assert hit["source"] == "Project Gutenberg #1, public domain"
+    assert hit["curated"] is True
+    r = index.read(hit["ref"], context=0)
+    assert r.data["source"] == hit["source"] and r.data["curated"] is True
+
+
+def test_authors_listing(index):
+    rows = index.authors()
+    assert {r["author"] for r in rows} == {"Ada Fixture", "Beatrice Sample"}
+    assert index.authors("fixture")[0]["works"] == 1
+
+
+def test_curated_only_and_language_filters(index):
+    assert index.search("master", curated_only=True).status == "ok"
+    assert index.search("master", language="fr").status == "no_coverage"

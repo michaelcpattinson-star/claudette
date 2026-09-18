@@ -23,7 +23,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 
 def manifest_path() -> Path:
@@ -45,3 +45,27 @@ def texts_dir() -> Path:
 
 def db_path() -> Path:
     return home_dir() / "claudette.db"
+
+
+def full_db_path() -> Path:
+    """The full tier, built locally by `claudette expand`. Used by the server when present."""
+    return home_dir() / "claudette-full.db"
+
+
+def active_db_path() -> Path:
+    """Full tier if it has been built, else the core."""
+    full = full_db_path()
+    return full if full.exists() else db_path()
+
+
+def texts_full_dir() -> Path:
+    return home_dir() / "texts-full"
+
+
+def catalog_path() -> Path:
+    return Path(__file__).resolve().parent / "data" / "works.full.csv"
+
+
+def local_manifest_path() -> Path:
+    """The operator's own additions. Never part of the package or the release index."""
+    return home_dir() / "manifest.local.toml"

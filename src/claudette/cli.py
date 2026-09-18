@@ -49,12 +49,59 @@ def cmd_verify(a: argparse.Namespace) -> int:
 
 
 def cmd_index(a: argparse.Namespace) -> int:
+    from claudette.fetch import clean_path
     from claudette.index import build
 
     manifest_p, texts, db = _paths()
     m = load_manifest(manifest_p)
-    counts = build(m, texts, db)
+
+    def text_for(w):
+        p = clean_path(texts, w)
+        return p.read_text(encoding="utf-8") if p.exists() else None
+
+    counts = build(m, text_for, db, tier="core")
     print(f"{sum(counts.values())} passages from {len(counts)} works → {db}")
+    return 0
+
+
+def cmd_expand(a: argparse.Namespace) -> int:
+    from claudette.expand import expand
+
+    langs = set(a.languages.split(",")) if a.languages else None
+    out = expand(languages=langs, limit=a.limit, skip_fetch=a.skip_fetch)
+    print(f"full tier at {out}; the server will use it from now on. Delete it to go back to the core.")
+    return 0
+
+
+def cmd_catalog(a: argparse.Namespace) -> int:
+    """Maintainers only: regenerate authors.csv and works.full.csv from Wikidata and Gutenberg."""
+    import urllib.parse
+    import urllib.request
+    from datetime import date
+
+    from claudette import catalog_path
+    from claudette.catalog import WIKIDATA_QUERY, build_catalog, write_catalog
+    from claudette.fetch import USER_AGENT
+
+    data = catalog_path().parent
+    authors = data / "authors.csv"
+    print("wikidata: querying women with Gutenberg author IDs")
+    req = urllib.request.Request(
+        "https://query.wikidata.org/sparql?" + urllib.parse.urlencode({"query": WIKIDATA_QUERY}),
+        headers={"Accept": "text/csv", "User-Agent": USER_AGENT},
+    )
+    with urllib.request.urlopen(req, timeout=300) as r:
+        authors.write_bytes(r.read())
+    rdf = Path(a.rdf) if a.rdf else texts_dir().parent / "rdf-files.tar.bz2"
+    if not rdf.exists():
+        print("gutenberg: downloading RDF metadata dump (~120 MB)")
+        req = urllib.request.Request("https://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.bz2", headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(req, timeout=900) as r, open(rdf, "wb") as f:
+            while chunk := r.read(1 << 20):
+                f.write(chunk)
+    works = build_catalog(rdf, authors)
+    write_catalog(works, catalog_path(), generated=f"{date.today().isoformat()} from Wikidata + Gutenberg RDF dump")
+    print(f"wrote {authors} and {catalog_path()}")
     return 0
 
 
@@ -64,7 +111,8 @@ def cmd_search(a: argparse.Namespace) -> int:
     for lim in resp.limitations:
         print(f"  ! {lim}")
     for h in resp.data or []:
-        print(f"\n[{h['author']}, {h['title']} §{h['ordinal']}]  ref={h['ref']}  matched={h['matched_terms']}")
+        tag = "" if h["curated"] else "  [full tier, unreviewed]"
+        print(f"\n[{h['author']}, {h['title']} §{h['ordinal']}]  ref={h['ref']}  matched={h['matched_terms']}{tag}")
         print("  " + h["text"][:600].replace("\n", "\n  ") + ("…" if len(h["text"]) > 600 else ""))
     return 0
 
@@ -82,8 +130,20 @@ def cmd_read(a: argparse.Namespace) -> int:
 
 
 def cmd_works(a: argparse.Namespace) -> int:
-    for w in _index().works(a.shelf):
-        print(f"{w['year']}  {w['author']:28s} {w['title'][:50]:50s}  {w['slug']}  ({w['passages']} passages)")
+    idx = _index()
+    st = idx.stats()
+    print(f"{st['tier']} tier: {st['works']} works, {st['authors']} authors, {st['passages']} passages, {st['languages']} languages\n")
+    for w in idx.works(a.shelf, author=a.author, limit=a.limit):
+        yr = w["year"] or "n.d."
+        flag = " " if w["curated"] else "~"
+        print(f"{flag}{yr!s:5s} {w['author'][:28]:28s} {w['title'][:50]:50s}  {w['slug']}  ({w['passages']})")
+    return 0
+
+
+def cmd_authors(a: argparse.Namespace) -> int:
+    for r in _index().authors(a.query, limit=a.limit):
+        flag = "*" if r["curated"] else " "
+        print(f"{flag} {r['works']:4d} works {r['passages']:7d} passages  {r['author']}")
     return 0
 
 
@@ -159,9 +219,26 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--context", type=int, default=1)
     s.set_defaults(fn=cmd_read)
 
-    s = sub.add_parser("works", help="list the works in the index")
-    s.add_argument("--shelf", choices=["thought", "fiction"])
+    s = sub.add_parser("works", help="list the works in the index (~ marks the unreviewed full tier)")
+    s.add_argument("--shelf", choices=["thought", "fiction", "uncurated"])
+    s.add_argument("--author", help="substring of an author's name")
+    s.add_argument("--limit", type=int, default=100)
     s.set_defaults(fn=cmd_works)
+
+    s = sub.add_parser("authors", help="who is in the index, and how much (* = curated)")
+    s.add_argument("query", nargs="?")
+    s.add_argument("--limit", type=int, default=50)
+    s.set_defaults(fn=cmd_authors)
+
+    s = sub.add_parser("expand", help="build the FULL tier: every catalogued Gutenberg text by women (slow, GBs, resumable)")
+    s.add_argument("--languages", help="comma-separated ISO codes, e.g. en,fr. Default: all")
+    s.add_argument("--limit", type=int, help="only the first N catalogued works (for a trial run)")
+    s.add_argument("--skip-fetch", action="store_true", help="index what is already on disk without contacting the mirror")
+    s.set_defaults(fn=cmd_expand)
+
+    s = sub.add_parser("catalog", help="(maintainers) regenerate data/authors.csv and data/works.full.csv")
+    s.add_argument("--rdf", help="path to an already-downloaded rdf-files.tar.bz2")
+    s.set_defaults(fn=cmd_catalog)
 
     s = sub.add_parser("ask", help="ask one question (needs the `chat` dependency group and Anthropic credentials)")
     s.add_argument("question")

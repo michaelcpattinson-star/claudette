@@ -22,7 +22,7 @@ from pydantic import BaseModel, Field
 
 Status = Literal["ok", "weak", "no_coverage", "not_found"]
 
-PROVENANCE = "Every passage is from a work by a named woman author, in the public domain, via Project Gutenberg."
+PROVENANCE = "Every passage is from a work by a named woman author. Each hit's `source` says where that text came from and on what basis; `curated` says whether a person reviewed the edition."
 
 CONSTRAINT = (
     "Answer only from these passages. Quote or closely paraphrase, and cite each "
@@ -37,10 +37,12 @@ class Hit(BaseModel):
     ref: str = Field(description="Citation key, e.g. 'follett-new-state§412'. Pass to read_passage.")
     author: str
     title: str
-    year: int
+    year: int | None
     ordinal: int = Field(description="Passage number within the work.")
     text: str
     matched_terms: list[str] = Field(description="Query terms found in this passage. Fewer than half the query's terms means a thin match.")
+    source: str = Field(description="Where this text came from and on what basis, e.g. 'Project Gutenberg #1342, public domain'.")
+    curated: bool = Field(description="True if a person reviewed this edition and wrote its manifest entry; False for the generated full tier, whose front matter has not been checked.")
 
 
 class ToolResponse(BaseModel):

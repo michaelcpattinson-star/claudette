@@ -108,6 +108,9 @@ title = "Woman in the Nineteenth Century"
 year = 1845
 shelf = "thought"
 why = "American transcendentalism's clearest statement on the subject, by the first full-time book reviewer in American journalism."
+# Gutenberg #8642 opens with a preface by her brother Arthur B. Fuller and an
+# introduction signed by Horace Greeley. Both are cut; Fuller's text begins at Part I.
+start_after = "H. GREELEY."
 
 [[work]]
 id = 73404
@@ -135,6 +138,8 @@ title = "Anarchism and Other Essays"
 year = 1910
 shelf = "thought"
 why = "The case against concentrated power, made without apology."
+# Gutenberg #2162 opens with a biographic sketch by Hippolyte Havel. Cut.
+start_after = "HIPPOLYTE HAVEL."
 
 [[work]]
 id = 14975

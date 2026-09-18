@@ -101,6 +101,8 @@ def fetch_all(manifest: Manifest, texts_dir: Path, *, force: bool = False, pause
     """Fetch every work not already on disk. Returns the works fetched."""
     fetched: list[Work] = []
     for work in manifest.works:
+        if work.lane != "public-domain":
+            continue
         raw = raw_path(texts_dir, work)
         if raw.exists() and not force:
             log(f"  have   {work.slug}")
@@ -118,6 +120,8 @@ def verify_all(manifest: Manifest, texts_dir: Path, *, show: int = 0, log=print)
     """Check each downloaded header title against the manifest. Returns problems."""
     problems: list[str] = []
     for work in manifest.works:
+        if work.lane != "public-domain":
+            continue
         raw = raw_path(texts_dir, work)
         if not raw.exists():
             problems.append(f"{work.slug}: not fetched")

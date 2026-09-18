@@ -85,7 +85,12 @@ def fixture_home(tmp_path_factory) -> Path:
         raw = GUTENBERG_WRAP.format(title=w.title, upper=w.title.upper(), body=FIXTURE_TEXT[w.slug])
         raw_path(texts, w).write_text(raw)
         clean_path(texts, w).write_text(strip_boilerplate(raw, w))
-    build(manifest, texts, home / "claudette.db", log=lambda *_: None)
+
+    def text_for(w):
+        p = clean_path(texts, w)
+        return p.read_text() if p.exists() else None
+
+    build(manifest, text_for, home / "claudette.db", tier="core", log=lambda *_: None)
     return home
 
 

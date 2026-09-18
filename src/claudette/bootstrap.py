@@ -16,7 +16,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-from claudette import __version__, db_path, manifest_path, texts_dir
+from claudette import __version__, active_db_path, db_path, manifest_path, texts_dir
 from claudette.manifest import load_manifest
 
 RELEASE_INDEX_URL = os.environ.get(
@@ -48,20 +48,52 @@ def _download_prebuilt(dest: Path) -> bool:
 
 
 def _build_locally(dest: Path) -> None:
-    from claudette.fetch import fetch_all
+    from claudette.fetch import clean_path, fetch_all
     from claudette.index import build
 
     m = load_manifest(manifest_path())
     log(f"claudette: fetching {len(m.works)} works from Project Gutenberg into {texts_dir()}")
     fetch_all(m, texts_dir(), log=log)
     log("claudette: building index")
-    build(m, texts_dir(), dest, log=log)
+
+    def text_for(w):
+        p = clean_path(texts_dir(), w)
+        return p.read_text(encoding="utf-8") if p.exists() else None
+
+    build(m, text_for, dest, tier="core", log=log)
+
+
+SCHEMA_VERSION = "2"  # bump when the index layout changes; stale files are rebuilt
+
+
+def _current_format(path: Path) -> bool:
+    import sqlite3
+
+    try:
+        con = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+        row = con.execute("SELECT value FROM meta WHERE key='schema'").fetchone()
+        con.close()
+        return row is not None and row[0] == SCHEMA_VERSION
+    except sqlite3.Error:
+        return False
 
 
 def ensure_index() -> Path:
+    """The full tier if `claudette expand` has built it, else the core — fetched if needed.
+
+    An index in an older layout is removed and fetched or built again, so an
+    upgrade never leaves a server that cannot read its own files.
+    """
+    active = active_db_path()
+    if active.exists():
+        if _current_format(active):
+            return active
+        log(f"claudette: {active.name} is in an older format; refreshing")
+        active.unlink()
+        active = active_db_path()
+        if active.exists() and _current_format(active):
+            return active
     dest = db_path()
-    if dest.exists():
-        return dest
     if not _download_prebuilt(dest):
         _build_locally(dest)
     log(f"claudette: index ready at {dest}")
