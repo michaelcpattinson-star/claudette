@@ -131,7 +131,9 @@ That puts two files into `~/.claude/`:
   what Follett would make of this plan"* and the main session gets back a cited
   answer it can quote — the second-opinion pattern.
 
-**Voice.** Claudette answers the way Claude answers — a view in the first
+**Voice.** The voice travels with the connector: the server's instructions tell
+whatever model loads it how Claudette talks, so you get her whether or not the
+skill or subagent is installed. Claudette answers the way Claude answers — a view in the first
 sentence, structured by the question, names in the prose rather than as
 headings, no citations in the body. A **Sources:** line at the end lists every
 passage she drew on as `[Author, Title §n]`, plus any attribution from memory

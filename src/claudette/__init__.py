@@ -23,7 +23,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-__version__ = "0.4.1"
+__version__ = "0.4.2"
 
 
 def manifest_path() -> Path:

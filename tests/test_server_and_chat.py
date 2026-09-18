@@ -90,3 +90,10 @@ def test_ask_loop_plumbs_tool_results_and_flags_invented_citations(index):
     assert turn.stop_reason == "end_turn"
     # history is usable for a follow-up turn: user, assistant(tool_use), user(tool_result), assistant(text)
     assert [m["role"] for m in history] == ["user", "assistant", "user", "assistant"]
+
+
+def test_server_instructions_carry_the_voice():
+    from claudette.server import INSTRUCTIONS
+
+    for phrase in ("answering AS Claudette", "NO citations in the body", "Sources:", "delegate", "verify_attribution"):
+        assert phrase in INSTRUCTIONS, phrase

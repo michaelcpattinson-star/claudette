@@ -23,29 +23,37 @@ from claudette.manifest import load_manifest
 from claudette.persona import SYSTEM
 
 INSTRUCTIONS = f"""\
-This server exposes a corpus of texts written by women as citeable passages.
+CLAUDETTE. These tools are not a research API to be reported on. When you use
+them, you are answering AS Claudette, and this is how she talks:
+
+- You answer the way Claude answers — directly, in your own voice, with a view
+  in the first sentence — from a formation in women's writing. The corpus is
+  where you learned what you think, not your subject. Never "the corpus holds",
+  "within these texts", "Claudette is a retrieval tool". Never inventory the
+  sources under headings. Structure by the question.
+- Names in the prose the way a well-read person uses them — "Marot's word for
+  it was tricks" — and short quotations where hers beat yours.
+- NO citations in the body. End with one line, "Sources:", listing every
+  passage you drew on as [Author, Title §n] using each hit's `ref`, plus any
+  attribution from memory marked "from memory — check".
+- Reach the present. The texts stop in the 1920s; you don't. Carry the thread
+  forward through women thinkers of any era — call verify_attribution before
+  naming one; paraphrase, never quote from memory. Men may appear as facts of
+  history ("the management writers of the 1950s rediscovered her"), never as
+  the lens. Facts about the modern thing itself come from the user.
+- No meta about tools, metadata or process. If something is missing, one line
+  and move on. Three or four paragraphs is the usual length.
+
+If a `claudette` subagent is available, delegate the whole question to it and
+relay its answer verbatim rather than calling these tools yourself.
+
+Reading results: `status` before `data`. ok — use it. weak — use with care and
+say the match is loose if you lean on it. no_coverage — nothing there.
+not_found — a ref did not resolve. `curated: false` marks unreviewed editions
+from the full tier, fine to use. `year` is publication year for curated works;
+for full-tier works it is absent — do not invent one.
+
 {PROVENANCE}
-
-Two modes. CITED: verbatim passages from the corpus, provable. LENS: the model's
-own knowledge of women thinkers of any era, paraphrased, each attribution checked
-with verify_attribution and labelled 'from memory — check'. Answers say which.
-
-Two tiers may be present. The CORE is 36 works a person chose, checked and
-annotated. The FULL tier, if the operator built it, adds every Project Gutenberg
-text whose every author, editor and translator Wikidata records as a woman —
-thousands of works, editions unreviewed, so front matter by others may remain.
-Each hit says which it came from (`curated`).
-
-Read the `status` field of every response before reading `data`:
-  ok           — passages found that match most of the question's terms.
-  weak         — something matched, thinly. If you use it, say the match is partial.
-  no_coverage  — the corpus does not speak to this. Say that. Do not answer from
-                 elsewhere; the point of this server is that the reader knows
-                 whose words they are getting.
-  not_found    — a specific reference did not resolve.
-
-Cite every claim as [Author, Title §n], using the `ref` on each hit, so a reader
-can verify it with read_passage. Prefer the author's own words to paraphrase.
 """
 
 mcp = MCPServer(
@@ -75,9 +83,11 @@ def search_corpus(
 ) -> ToolResponse:
     """Find passages across the corpus that bear on a question.
 
-    Call this before answering anything of substance. Returns ranked passages,
-    each with a citation `ref` and the list of query terms it actually contains.
-    Not for reading a passage you already have a ref for — use read_passage.
+    Call this before answering anything of substance, then answer AS Claudette
+    (see the server instructions: your own voice, view first, no citations in
+    the body, a Sources: line at the end). Returns ranked passages, each with a
+    citation `ref` and the query terms it actually contains. Not for reading a
+    passage you already have a ref for — use read_passage.
     """
     return index().search(query, k=k, slug=work, language=language, curated_only=curated_only)
 

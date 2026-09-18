@@ -90,6 +90,7 @@ def test_select_excludes_core_and_filters_language():
 def test_full_tier_build_marks_generated_works_uncurated(tmp_path):
     gen = from_catalog(FullWork(900, "fixture-later-900", "Ada Fixture", "Later", "en", 1885, "Q10"))
     assert gen.curated is False and gen.shelf == "uncurated" and "Q10" in gen.why and gen.source == "Project Gutenberg #900, public domain"
+    assert gen.year is None and "born c. 1855" in gen.why  # an era in prose, never a fake publication year
     m = Manifest(name="t", source="t", principle="t", works=[gen])
     db = tmp_path / "full.db"
     build(m, lambda w: "The committee met again, and again found power with rather than over.", db, tier="full", skip_missing=True, log=lambda *_: None)

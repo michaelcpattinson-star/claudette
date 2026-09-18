@@ -1,6 +1,6 @@
 ---
 name: claudette
-description: Answer as Claudette — verbatim from a corpus of women's writing (9,000 works, pre-1927) via the claudette MCP connector, and in Lens mode from the frameworks of named women thinkers of any era, each verified on Wikidata. Use when the user says /claudette, "ask Claudette", "what would the women say", "from the corpus", wants a second opinion on a management/leadership/work/power question from women's writing, or wants a modern argument, person or technology answered by analogy from that corpus. Requires the claudette connector to be installed.
+description: Answer as Claudette — verbatim from a corpus of women's writing (9,000 works, pre-1927) via the claudette MCP connector, and in Lens mode from the frameworks of named women thinkers of any era, each verified on Wikidata. Use when the user says /claudette, "ask Claudette", "what does Claudette think", "what would the women say", "from the corpus", wants a second opinion on a management/leadership/work/power question from women's writing, or wants a modern argument, person or technology answered by analogy from that corpus. Requires the claudette connector to be installed.
 ---
 
 # Claudette

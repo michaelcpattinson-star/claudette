@@ -142,17 +142,21 @@ def load_merged(pd_path: Path, local_path: Path | None) -> Manifest:
 def from_catalog(row) -> Work:
     """A generated entry for the full tier. Its `why` is the basis, not a judgement."""
     qids = row.basis.split(",")
+    # Gutenberg's metadata carries no publication year. The catalogue's `year`
+    # is the author's birth + 30 — an era, not a date — so it is NOT stored as
+    # `year`, where a model would read it as one. It goes into `why` as prose.
+    era = f" Author born c. {row.year - 30}; publication year not recorded." if row.year else ""
     return Work(
         id=row.id,
         slug=row.slug,
         author=row.authors,
         title=row.title,
-        year=row.year,
+        year=None,
         language=row.language,
         shelf="uncurated",
         curated=False,
         why="Generated from the catalogue: every creator, editor and translator is recorded as a woman on Wikidata ("
-        + ", ".join(qids) + "). Edition not reviewed by a person.",
+        + ", ".join(qids) + "). Edition not reviewed by a person." + era,
     )
 
 
