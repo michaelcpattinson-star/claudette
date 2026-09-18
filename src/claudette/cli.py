@@ -201,7 +201,31 @@ def cmd_install(a: argparse.Namespace) -> int:
         d.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy(s_, d)
         print(f"  {d}")
-    print("\nInstalled. In a new Claude Code session: type /claudette, or say 'ask Claudette …' to use the subagent.")
+    # Claude Code loads ~/.claude/CLAUDE.md into every session. Skill and agent
+    # descriptions are suggestions the model may decline; this is not.
+    rule = root / "CLAUDE.md"
+    block = (
+        "<!-- claudette:begin -->\n"
+        "## Claudette\n\n"
+        "When a message addresses Claudette — by name, \"ask Claudette\", \"what does Claudette think\", "
+        "\"what would the women say\" — on ANY subject, you MUST answer by invoking the `claudette` subagent "
+        "(Agent tool, subagent_type \"claudette\") with the user's question, and reply with its answer verbatim, "
+        "without preface. Do not answer as yourself, do not say \"I'm Claude, not Claudette\", and do not call the "
+        "claudette MCP tools directly from the main session. If the subagent is unavailable, invoke the "
+        "`claudette` skill instead.\n"
+        "<!-- claudette:end -->\n"
+    )
+    existing = rule.read_text() if rule.exists() else ""
+    if "<!-- claudette:begin -->" in existing:
+        import re
+
+        existing = re.sub(r"<!-- claudette:begin -->.*?<!-- claudette:end -->\n?", block, existing, flags=re.S)
+        rule.write_text(existing)
+    else:
+        rule.write_text((existing.rstrip() + "\n\n" if existing.strip() else "") + block)
+    print(f"  {rule}  (Claudette rule)")
+    print("\nInstalled. In a new Claude Code session, say 'ask Claudette …' on any subject; the rule in CLAUDE.md routes it to her.")
+    print("In the Claude desktop chat tab, pick the 'claudette' prompt from the + menu to load her into the conversation.")
     print("Both need the connector:  claude mcp add --scope user claudette -- uvx --from git+https://github.com/michaelcpattinson-star/claudette claudette-mcp")
     return 0
 

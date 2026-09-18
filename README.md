@@ -98,6 +98,11 @@ Or to Claude Desktop, in `claude_desktop_config.json`:
 }
 ```
 
+In the **Claude desktop app's chat tab** there is no CLAUDE.md, so load her
+explicitly: the connector publishes a prompt named `claudette` — pick it from
+the **+** menu at the start of a conversation and the rest of that conversation
+is hers.
+
 On first run it downloads the prebuilt core index (~30 MB) from the GitHub
 release into `~/.claudette/`; if that is unavailable it fetches the 36 texts
 from Project Gutenberg and builds the index itself (a few minutes, once). Then ask:
@@ -121,12 +126,17 @@ The connector gives Claude her tools; these give Claude her discipline.
 uvx --from git+https://github.com/michaelcpattinson-star/claudette claudette install
 ```
 
-That puts two files into `~/.claude/`:
+That puts two files into `~/.claude/` and one rule into `~/.claude/CLAUDE.md`:
 
 - **`/claudette` skill** — a workflow for answering as Claudette in your current
   session: frame, translate to period vocabulary, search, quote, cite, stop.
+- **A routing rule in `CLAUDE.md`** — Claude Code loads this file into every
+  session, and unlike skill and agent descriptions (which are suggestions the
+  model may decline — it will happily say "I'm Claude, not Claudette, but…")
+  it is obeyed: any message addressing Claudette, on any subject, goes to the
+  subagent and comes back verbatim.
 - **`claudette` subagent** — a separate agent whose *only* tools are the
-  connector's five and whose system prompt is her persona. It cannot read your
+  connector's six and whose system prompt is her persona and formation. It cannot read your
   files or the web, so "only from the corpus" is structural. Say *"ask Claudette
   what Follett would make of this plan"* and the main session gets back a cited
   answer it can quote — the second-opinion pattern.
