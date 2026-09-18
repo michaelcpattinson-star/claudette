@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+# Fetched texts and the built index live in ~/.claudette (CLAUDETTE_HOME) and are
+# reproducible from the manifest with `claudette fetch && claudette index`.
+*.db
+*.db.part
+evals/results/raw_*.json
+evals/results/scores.json

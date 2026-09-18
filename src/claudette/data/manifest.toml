@@ -1,0 +1,357 @@
+# The provenance gate.
+#
+# Claudette can only ever say something that appears in a work listed here.
+# The index is built from this file and nothing else, so the guarantee
+# "every word came from a woman" is enforced by curation rather than by a
+# classifier: adding a work means adding an entry, with the author named,
+# and a reviewer can read the whole list in five minutes.
+#
+# Each work is a Project Gutenberg public-domain text, identified by its
+# Gutenberg ID. `claudette verify` re-fetches the header of each and checks
+# that the title matches, so an ID typo cannot silently pull in the wrong book.
+#
+# Known limitation, stated rather than hidden: Gutenberg editions sometimes
+# carry a preface or introduction by an editor, and some editors were men.
+# `start_after` and `end_before` trim such matter; entries known to need it
+# say so. `claudette verify --show` prints the first lines after the marker
+# so a reviewer can eyeball the rest.
+
+[corpus]
+name = "Claudette corpus"
+source = "Project Gutenberg (public domain)"
+principle = "Every passage is by a named woman author. Nothing else is indexed."
+
+# ---------------------------------------------------------------------------
+# Shelf: thought — political economy, social ethics, organisation, management
+# ---------------------------------------------------------------------------
+
+[[work]]
+id = 73755
+slug = "follett-new-state"
+author = "Mary Parker Follett"
+title = "The New State: Group Organization the Solution of Popular Government"
+year = 1918
+shelf = "thought"
+why = "The direct historical answer to Taylorism. Follett's management theory — 'power-with' rather than 'power-over', conflict resolved by integration rather than domination — was written while scientific management was ascendant, and was buried by it for fifty years."
+# Gutenberg #73755 is the 1918 first edition: the introduction is Follett's own.
+# (The 1920 reprint added one by Viscount Haldane; if that edition is ever
+# substituted, add a start_after trim.)
+
+[[work]]
+id = 15487
+slug = "addams-democracy-social-ethics"
+author = "Jane Addams"
+title = "Democracy and Social Ethics"
+year = 1902
+shelf = "thought"
+why = "Ethics as a practice of understanding other people's situations before judging them. Includes a chapter on industrial relations written from inside Hull-House during the Pullman strike."
+
+[[work]]
+id = 1325
+slug = "addams-hull-house"
+author = "Jane Addams"
+title = "Twenty Years at Hull-House"
+year = 1910
+shelf = "thought"
+why = "What it actually looks like to run an institution on empathy for two decades. Not a theory book."
+
+[[work]]
+id = 33944
+slug = "martineau-morals-manners"
+author = "Harriet Martineau"
+title = "How to Observe Morals and Manners"
+year = 1838
+shelf = "thought"
+why = "Arguably the first methodology text in sociology. Martineau was writing about political economy and labour while Frederick Taylor's father was a child."
+
+[[work]]
+id = 52621
+slug = "martineau-society-america-1"
+author = "Harriet Martineau"
+title = "Society in America, Volume 1"
+year = 1837
+shelf = "thought"
+why = "A sociologist's account of a young republic, measured against its own stated principles."
+
+[[work]]
+id = 57913
+slug = "gilman-women-economics"
+author = "Charlotte Perkins Gilman"
+title = "Women and Economics"
+year = 1898
+shelf = "thought"
+why = "The economic argument: that a society which wastes half its people's work is not merely unjust but inefficient."
+
+[[work]]
+id = 1440
+slug = "schreiner-woman-labour"
+author = "Olive Schreiner"
+title = "Woman and Labour"
+year = 1911
+shelf = "thought"
+why = "On what happens to people — of either sex — when they are cut off from meaningful work."
+
+[[work]]
+id = 3420
+slug = "wollstonecraft-vindication"
+author = "Mary Wollstonecraft"
+title = "A Vindication of the Rights of Woman"
+year = 1792
+shelf = "thought"
+why = "The founding text. Reason, education and the argument that virtue is the same in everyone."
+
+[[work]]
+id = 8642
+slug = "fuller-woman-nineteenth-century"
+author = "Margaret Fuller"
+title = "Woman in the Nineteenth Century"
+year = 1845
+shelf = "thought"
+why = "American transcendentalism's clearest statement on the subject, by the first full-time book reviewer in American journalism."
+
+[[work]]
+id = 73404
+slug = "taylor-mill-enfranchisement"
+author = "Harriet Taylor Mill"
+title = "Enfranchisement of Women"
+year = 1851
+shelf = "thought"
+why = "The essay that was long credited to her husband. Short, and sharper than anything he wrote on the topic."
+
+[[work]]
+id = 54984
+slug = "astell-serious-proposal"
+author = "Mary Astell"
+title = "A Serious Proposal to the Ladies"
+year = 1694
+shelf = "thought"
+why = "The earliest work here. A proposal for women's education, a century before Wollstonecraft."
+
+[[work]]
+id = 2162
+slug = "goldman-anarchism"
+author = "Emma Goldman"
+title = "Anarchism and Other Essays"
+year = 1910
+shelf = "thought"
+why = "The case against concentrated power, made without apology."
+
+[[work]]
+id = 14975
+slug = "wells-southern-horrors"
+author = "Ida B. Wells"
+title = "Southern Horrors: Lynch Law in All Its Phases"
+year = 1892
+shelf = "thought"
+why = "Investigative journalism as a moral act. Wells documented what others preferred not to see."
+
+[[work]]
+id = 60692
+slug = "tarbell-standard-oil"
+author = "Ida M. Tarbell"
+title = "The History of the Standard Oil Company"
+year = 1904
+shelf = "thought"
+why = "The book that broke up a monopoly. On what a very rich man will do when nobody stops him, documented from the primary sources."
+
+[[work]]
+id = 17366
+slug = "nightingale-notes-nursing"
+author = "Florence Nightingale"
+title = "Notes on Nursing: What It Is, and What It Is Not"
+year = 1859
+shelf = "thought"
+why = "Observation, evidence and care as a discipline. Nightingale was also a pioneering statistician."
+
+[[work]]
+id = 11030
+slug = "jacobs-incidents"
+author = "Harriet Jacobs"
+title = "Incidents in the Life of a Slave Girl"
+year = 1861
+shelf = "thought"
+why = "Written by herself, as the title page insists. Edited by Lydia Maria Child."
+
+[[work]]
+id = 1674
+slug = "truth-narrative"
+author = "Sojourner Truth"
+title = "The Narrative of Sojourner Truth"
+year = 1850
+shelf = "thought"
+why = "Dictated to Olive Gilbert. Both women."
+
+# ---------------------------------------------------------------------------
+# Shelf: fiction
+# ---------------------------------------------------------------------------
+
+[[work]]
+id = 4276
+slug = "gaskell-north-and-south"
+author = "Elizabeth Gaskell"
+title = "North and South"
+year = 1855
+shelf = "fiction"
+why = "The industrial novel. A mill-owner and a strike, seen by someone who understood that both sides were made of people."
+
+[[work]]
+id = 1342
+slug = "austen-pride-prejudice"
+author = "Jane Austen"
+title = "Pride and Prejudice"
+year = 1813
+shelf = "fiction"
+why = "On judging people too fast."
+
+[[work]]
+id = 105
+slug = "austen-persuasion"
+author = "Jane Austen"
+title = "Persuasion"
+year = 1817
+shelf = "fiction"
+why = "On being talked out of what you know."
+
+[[work]]
+id = 84
+slug = "shelley-frankenstein"
+author = "Mary Shelley"
+title = "Frankenstein; or, The Modern Prometheus"
+year = 1818
+shelf = "fiction"
+why = "A man builds something without asking whether he should, then refuses responsibility for it. Still the best book on the subject."
+
+[[work]]
+id = 1260
+slug = "bronte-jane-eyre"
+author = "Charlotte Brontë"
+title = "Jane Eyre"
+year = 1847
+shelf = "fiction"
+why = "'I am no bird; and no net ensnares me.'"
+
+[[work]]
+id = 768
+slug = "bronte-wuthering-heights"
+author = "Emily Brontë"
+title = "Wuthering Heights"
+year = 1847
+shelf = "fiction"
+why = "What cruelty does across generations."
+
+[[work]]
+id = 969
+slug = "bronte-tenant-wildfell"
+author = "Anne Brontë"
+title = "The Tenant of Wildfell Hall"
+year = 1848
+shelf = "fiction"
+why = "A woman leaves an abusive husband and supports herself. Scandalous in 1848."
+
+[[work]]
+id = 145
+slug = "eliot-middlemarch"
+author = "George Eliot"
+title = "Middlemarch"
+year = 1871
+shelf = "fiction"
+why = "The most sustained act of sympathy in the English novel. Also the most quotable on the subject of unhistoric acts."
+
+[[work]]
+id = 550
+slug = "eliot-silas-marner"
+author = "George Eliot"
+title = "Silas Marner"
+year = 1861
+shelf = "fiction"
+why = "A miser is saved by a child. Short."
+
+[[work]]
+id = 514
+slug = "alcott-little-women"
+author = "Louisa May Alcott"
+title = "Little Women"
+year = 1868
+shelf = "fiction"
+why = "Domestic life treated as a subject worth writing about seriously."
+
+[[work]]
+id = 203
+slug = "stowe-uncle-toms-cabin"
+author = "Harriet Beecher Stowe"
+title = "Uncle Tom's Cabin"
+year = 1852
+shelf = "fiction"
+why = "A novel that changed a country's politics. Read today with the caveats it deserves, but read."
+
+[[work]]
+id = 160
+slug = "chopin-awakening"
+author = "Kate Chopin"
+title = "The Awakening, and Selected Short Stories"
+year = 1899
+shelf = "fiction"
+why = "Ended Chopin's career. Now on every syllabus."
+
+[[work]]
+id = 32
+slug = "gilman-herland"
+author = "Charlotte Perkins Gilman"
+title = "Herland"
+year = 1915
+shelf = "fiction"
+why = "Three men discover a country run entirely by women and find it orderly, peaceful and baffling."
+
+[[work]]
+id = 1952
+slug = "gilman-yellow-wallpaper"
+author = "Charlotte Perkins Gilman"
+title = "The Yellow Wallpaper"
+year = 1892
+shelf = "fiction"
+why = "What the 'rest cure' — a man's prescription — did to the woman who took it."
+
+[[work]]
+id = 284
+slug = "wharton-house-of-mirth"
+author = "Edith Wharton"
+title = "The House of Mirth"
+year = 1905
+shelf = "fiction"
+why = "Money, and what it does to the people who need it."
+
+[[work]]
+id = 541
+slug = "wharton-age-of-innocence"
+author = "Edith Wharton"
+title = "The Age of Innocence"
+year = 1920
+shelf = "fiction"
+why = "First Pulitzer for fiction awarded to a woman."
+
+[[work]]
+id = 144
+slug = "woolf-voyage-out"
+author = "Virginia Woolf"
+title = "The Voyage Out"
+year = 1915
+shelf = "fiction"
+why = "Woolf's first novel."
+
+[[work]]
+id = 1245
+slug = "woolf-night-and-day"
+author = "Virginia Woolf"
+title = "Night and Day"
+year = 1919
+shelf = "fiction"
+why = "Woolf's second."
+
+[[work]]
+id = 5670
+slug = "woolf-jacobs-room"
+author = "Virginia Woolf"
+title = "Jacob's Room"
+year = 1922
+shelf = "fiction"
+why = "Where the modernist Woolf begins. A life reconstructed from the impressions it left on other people."

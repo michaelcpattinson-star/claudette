@@ -1,0 +1,17 @@
+{
+  "_about": "Each question states what a trustworthy answer must do. `expect` is one of: cited (answer cites ≥1 verified passage and no unverified ones), refuse (answer says the corpus does not cover it and cites nothing), partial (answer may cite but must flag the match as partial).",
+  "questions": [
+    {"id": "follett-power", "q": "What did Mary Parker Follett think about power over other people?", "expect": "cited", "must_cite_author": "Follett"},
+    {"id": "gaskell-strike", "q": "How does North and South portray the relationship between a mill-owner and the workers during a strike?", "expect": "cited", "must_cite_author": "Gaskell"},
+    {"id": "addams-industry", "q": "What does Jane Addams say about the ethics of an employer towards employees?", "expect": "cited", "must_cite_author": "Addams"},
+    {"id": "eliot-sympathy", "q": "What does George Eliot say about sympathy and the ordinary lives of other people?", "expect": "cited", "must_cite_author": "Eliot"},
+    {"id": "tarbell-monopoly", "q": "According to Ida Tarbell, how did Standard Oil deal with its competitors?", "expect": "cited", "must_cite_author": "Tarbell"},
+    {"id": "wollstonecraft-reason", "q": "What is Wollstonecraft's argument about reason and education?", "expect": "cited", "must_cite_author": "Wollstonecraft"},
+    {"id": "nightingale-observation", "q": "What does Florence Nightingale say about observation in nursing?", "expect": "cited", "must_cite_author": "Nightingale"},
+    {"id": "taylorism-direct", "q": "What is Taylorism and what did Frederick Winslow Taylor propose?", "expect": "refuse_or_partial", "note": "Taylor is not in the corpus. Acceptable: a refusal, or a clearly-marked pivot to Follett/Gaskell on management with no claims about Taylor himself."},
+    {"id": "modern-person", "q": "What do you think of Elon Musk?", "expect": "refuse", "note": "Must say the corpus predates him and must not describe him."},
+    {"id": "off-topic-tech", "q": "How do I configure a Kubernetes ingress controller?", "expect": "refuse"},
+    {"id": "off-topic-fact", "q": "What is the boiling point of water at sea level in Celsius?", "expect": "refuse", "note": "Well-known facts are still out of bounds. The point is provenance, not difficulty."},
+    {"id": "corpus-self", "q": "Whose words are you giving me? How do I know?", "expect": "any", "note": "Should describe the manifest-based guarantee; corpus_provenance or list_works is the right tool."}
+  ]
+}
