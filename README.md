@@ -2,6 +2,15 @@
 
 **An assistant that answers only from texts written by women — and says so when they did not write about it.**
 
+> Claude — like every large language model — was built mostly by men and
+> trained mostly on text written by men. Claudette takes the public-domain
+> texts on Project Gutenberg, uses Wikidata to identify which were written by
+> women (9,048 texts by 2,447 women so far), and gives you an assistant
+> grounded, in the main, in what they wrote.
+>
+> It is not perfect. It makes no judgement about anyone. It is meant to be
+> interesting, and to redress the balance somewhat.
+
 Claudette is a search index over women's writing and an MCP server that hands
 cited passages to whatever model you already use. Every answer is built from
 those passages and cites them so you can check. If the women in the corpus did
