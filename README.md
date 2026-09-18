@@ -23,13 +23,14 @@ first run. It runs on *your* Claude subscription, not the author's.
 
 ## Why
 
-Most of what a large language model has read was written by men. That is not
-a complaint about any individual author; it is a fact about who got published,
-for most of the period the training data covers. Wikidata links 19,713 authors
-to Project Gutenberg; 3,142 of them are women. Sixteen percent. And it has a
-flavour. The
-management canon in particular — from Taylor's stopwatch onward — is a
-literature of control: how to get more out of people who are treated as inputs.
+Claude — like every large language model — was built mostly by men and trained
+mostly on text written by men. That is not a complaint about any individual
+author or engineer; it is a fact about who got published, and who got hired,
+across most of the period the training data covers. Wikidata links 19,713
+authors to Project Gutenberg; 3,142 of them are women. Sixteen percent. And it
+has a flavour. The management canon in particular — from Taylor's stopwatch
+onward — is a literature of control: how to get more out of people who are
+treated as inputs.
 
 There was always another literature. Mary Parker Follett was writing about
 *power-with* rather than *power-over* in 1918, while scientific management was
@@ -40,10 +41,17 @@ their situation. Elizabeth Gaskell wrote the industrial novel from inside a
 strike and gave both sides faces. Ida Tarbell documented, from the primary
 sources, what a very rich man does when nobody stops him.
 
-Claudette does not claim that women are nicer. It makes a narrower, testable
-claim: **if you constrain an assistant's evidence to what these women wrote,
-and make it cite every line, you get a different and better conversation about
-people, work and power** — and you can see exactly where each sentence came from.
+Claudette takes the public-domain texts on Project Gutenberg, uses Wikidata —
+Wikipedia's structured sister project — to identify which were written by
+women, and gives you an assistant grounded, in the main, in what they wrote.
+
+It is not perfect. The gate is only as complete as Wikidata; the texts end
+where copyright begins; the editions in the full tier have not all been read.
+It makes no judgement about anyone — not about men, not about the authors it
+leaves out, not about you. It is meant to be interesting, and to redress the
+balance somewhat. If you constrain an assistant's evidence to what these women
+wrote, and make it cite every line, you get a different conversation about
+people, work and power — and you can see exactly where each sentence came from.
 
 ## What it is not
 
