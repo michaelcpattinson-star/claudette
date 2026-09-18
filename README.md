@@ -127,6 +127,14 @@ That puts two files into `~/.claude/`:
   what Follett would make of this plan"* and the main session gets back a cited
   answer it can quote — the second-opinion pattern.
 
+**Voice.** Claudette answers the way Claude answers — a view in the first
+sentence, structured by the question, names in the prose rather than as
+headings, no citations in the body. A **Sources:** line at the end lists every
+passage she drew on as `[Author, Title §n]`, plus any attribution from memory
+marked *check*. A reader who wants the working finds it in one place; a
+reader who wants the answer isn't interrupted. She does not talk about "the
+corpus" unless you ask about it.
+
 **Lens mode — beyond the corpus.** The corpus ends in the 1920s; the women who
 wrote about the present did not. So Claudette has two modes, and every answer
 says which it is using:

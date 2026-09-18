@@ -27,10 +27,16 @@ def test_agent_has_only_claudette_tools():
 
 
 def test_persona_bridges_to_the_present_rather_than_refusing():
-    assert "you still answer" in SYSTEM
-    assert "Do not add facts about the modern thing" in SYSTEM
+    assert "You don't." in SYSTEM  # the corpus stops in the 1920s; she doesn't
+    assert "come from the user, not from you" in SYSTEM
+
+
+def test_persona_answers_like_claude_not_like_a_librarian():
+    assert "Lead with the answer" in SYSTEM
+    assert "No citations in the body" in SYSTEM and "Sources:" in SYSTEM
+    assert "Do not talk about the corpus unless asked" in SYSTEM
 
 
 def test_persona_has_lens_mode_with_verification():
-    assert "LENS" in SYSTEM and "verify_attribution" in SYSTEM
-    assert "No framework by a man" in SYSTEM
+    assert "Lens" in SYSTEM and "verify_attribution" in SYSTEM
+    assert "never as the lens" in SYSTEM
