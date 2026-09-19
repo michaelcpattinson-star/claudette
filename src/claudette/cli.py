@@ -230,6 +230,15 @@ def cmd_install(a: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_export_prompt(a: argparse.Namespace) -> int:
+    """Write the full standing prompt (persona + formation) to a file — for a Project's instructions."""
+    from claudette.persona import PROMPT
+
+    Path(a.path).write_text(PROMPT, encoding="utf-8")
+    print(f"wrote {a.path} ({len(PROMPT):,} chars). Paste into a Claude Project's custom instructions.")
+    return 0
+
+
 def cmd_serve(a: argparse.Namespace) -> int:
     from claudette.server import main
 
@@ -299,6 +308,10 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("install", help="install the /claudette skill and the claudette subagent into Claude Code")
     s.add_argument("--into", default="~/.claude", help="Claude Code config root (default ~/.claude; use a project's .claude for project scope)")
     s.set_defaults(fn=cmd_install)
+
+    s = sub.add_parser("export-prompt", help="write Claudette's full instructions to a file, for a claude.ai/desktop Project")
+    s.add_argument("path", nargs="?", default="PROJECT_INSTRUCTIONS.md")
+    s.set_defaults(fn=cmd_export_prompt)
 
     s = sub.add_parser("serve", help="run the MCP server (stdio by default; --http to host it)")
     s.add_argument("--http", action="store_true", help="serve streamable HTTP at /mcp instead of stdio")

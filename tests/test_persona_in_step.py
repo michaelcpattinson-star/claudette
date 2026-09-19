@@ -65,3 +65,10 @@ def test_no_question_is_out_of_scope():
     assert "more a question for Claude" in SYSTEM
     sections = FORMATION.count("\n## ")
     assert sections >= 25
+
+
+def test_project_instructions_file_matches_the_prompt():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    assert (root / "PROJECT_INSTRUCTIONS.md").read_text(encoding="utf-8") == PROMPT

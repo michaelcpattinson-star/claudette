@@ -98,10 +98,32 @@ Or to Claude Desktop, in `claude_desktop_config.json`:
 }
 ```
 
-In the **Claude desktop app's chat tab** there is no CLAUDE.md, so load her
-explicitly: the connector publishes a prompt named `claudette` — pick it from
-the **+** menu at the start of a conversation and the rest of that conversation
-is hers.
+### Using her in the Claude desktop app's chat tab
+
+The chat tab has no `CLAUDE.md`, so load her one of two ways.
+
+**A Claudette Project (recommended — set up once, then just talk).**
+A Project's custom instructions apply to every conversation inside it, which
+is the same lever `CLAUDE.md` gives Claude Code.
+
+1. **Projects** (left sidebar) → **Create project** → name it *Claudette*.
+2. Open the project's **Instructions** and paste the contents of
+   [`PROJECT_INSTRUCTIONS.md`](PROJECT_INSTRUCTIONS.md) — her full persona and
+   all of her convictions, about 30k characters, which fits.
+3. In any chat in that project, click the **sliders / "Search and tools"**
+   icon by the message box and check the **claudette** connector is on. (Not
+   listed? Quit and reopen the app; it reads its config at launch.)
+4. Ask her anything. No "ask Claudette" needed — she *is* the project.
+
+**Per conversation, from the connector's prompt.** The connector publishes a
+prompt named `claudette` containing the same text. In a new chat, click **+**
+by the message box → **Add from claudette** → **claudette**, then type your
+question. Repeat for each conversation.
+
+Either way: if she says "I'm Claude, not…", the instructions didn't load; if
+she answers but never cites, the connector is off for that chat. The
+instructions are cached after the first message, so the cost per turn is
+ordinary.
 
 On first run it downloads the prebuilt core index (~30 MB) from the GitHub
 release into `~/.claudette/`; if that is unavailable it fetches the 36 texts
@@ -250,7 +272,8 @@ uv run claudette search "power over" -k 3
 uv run claudette read follett-new-state§412
 uv run claudette works --author gaskell   # ~ marks unreviewed full-tier editions
 uv run claudette authors nurs             # who is in here, and how much
-uv run claudette install         # put the /claudette skill and subagent into ~/.claude
+uv run claudette install         # skill, subagent and CLAUDE.md rule into ~/.claude
+uv run claudette export-prompt   # PROJECT_INSTRUCTIONS.md for a desktop/claude.ai Project
 uv run claudette catalog         # maintainers: regenerate authors.csv and works.full.csv
 ```
 
@@ -380,6 +403,7 @@ src/claudette/
   server.py            the MCP server. Six tools, one prompt. No key.
   persona.py           Claudette's standing instructions (voice + rules)
   data/formation.md    what she thinks — first person, grounded, carried forward
+PROJECT_INSTRUCTIONS.md  persona + formation, ready to paste into a Project (generated)
   chat.py              CLI chat client — the only module that calls a model
   cli.py               `claudette` command
 tests/                 offline; builds a fixture corpus the same way as the real one
